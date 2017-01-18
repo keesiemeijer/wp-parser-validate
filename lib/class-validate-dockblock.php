@@ -10,7 +10,7 @@ class Validate_DocBlcock {
 	 */
 	public $logger;
 
-	public function __construct( $logger ) {
+	public function __construct( Validate_Logger $logger ) {
 		$this->logger = $logger;
 	}
 
@@ -196,7 +196,7 @@ class Validate_DocBlcock {
 			if ( $arg_name !== $doc_params[ $key ] ) {
 				$msg = sprintf( "Mismatched @param tag name '%s' in DocBlock",  $doc_params[ $key ] );
 				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
-				$this->logger->log( $name, $type, $msg );
+				$this->logger->log_notice( $name, $type, $msg );
 			}
 		}
 	}
@@ -294,15 +294,14 @@ class Validate_DocBlcock {
 		$line         = get_line( $node );
 		$return_types = get_doc_return_types( $node );
 
-		if ( ! $return_types ) {
+		if ( ! ( isset( $return_types[0] ) && ( 1 === count( $return_types ) ) ) ) {
 			return;
 		}
-		foreach ( $return_types as $return ) {
-			if ( false !== strpos( strtolower( $return ), 'void' ) ) {
-				$msg = "Value 'void' found in @return tag in DocBlock";
-				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
-				$this->logger->log( $name, $type, $msg );
-			}
+
+		if ( 'void' === strtolower( $return_types[0] ) ) {
+			$msg = "The @return tag with value 'void' can be omitted in DocBlock";
+			$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
+			$this->logger->log_notice( $name, $type, $msg );
 		}
 	}
 

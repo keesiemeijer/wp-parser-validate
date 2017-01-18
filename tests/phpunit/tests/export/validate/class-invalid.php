@@ -138,6 +138,6 @@ class Validate_Class extends Export_UnitTestCase {
 	 * Test method that returns void.
 	 */
 	public function test_method_return_void() {
-		$this->assertContainsSubstring( "Value 'void' found in @return tag in DocBlock for method 'method_returning_void' in class 'Invalid_Class'", $this->logs );
+		$this->assertContainsSubstring( "The @return tag with value 'void' can be omitted in DocBlock for method 'method_returning_void' in class 'Invalid_Class'", $this->logs );
 	}
 }

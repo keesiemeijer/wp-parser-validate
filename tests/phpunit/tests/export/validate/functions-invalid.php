@@ -97,6 +97,6 @@ class Validate_Functions extends Export_UnitTestCase {
 	 * Test function that returns void.
 	 */
 	public function test_function_return_void() {
-		$this->assertContainsSubstring( "Value 'void' found in @return tag in DocBlock for function 'return_void_function'", $this->logs );
+		$this->assertContainsSubstring( "The @return tag with value 'void' can be omitted in DocBlock for function 'return_void_function'", $this->logs );
 	}
 }

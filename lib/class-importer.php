@@ -34,6 +34,7 @@ class Importer implements LoggerAwareInterface {
 	public function validate( $data, $skip_sleep = false, $validate_ignored_functions = false ) {
 
 		$this->validator = new Validate;
+		$this->validator->logger->set_format( 'wp-cli' );
 
 		$this->logger->info( 'Starting validation. This will take some time' );
 

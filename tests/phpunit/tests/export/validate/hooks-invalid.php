@@ -116,9 +116,13 @@ class Validate_Hooks extends Export_UnitTestCase {
 	 * Test function with missing @param variable.
 	 */
 	public function test_filter_missing_param_variable() {
-		//Missing @param variable '$var' in DocBlock for function 'missing_variable_function'
 		$this->assertContainsSubstring( "Missing @param variable '". '$value' . "' in DocBlock for filter 'missing_variable_filter'", $this->logs );
 	}
 
-
+	/**
+	 * Test warning for not succinct hook name.
+	 */
+	public function test_filter_not_succinct() {
+		$this->assertContainsSubstring( "Hook name could be more succinct for filter '" . '"not_succinct_filter_name_{$this->filter[' . "'" . 'value' . "']}", $this->logs );
+	}
 }

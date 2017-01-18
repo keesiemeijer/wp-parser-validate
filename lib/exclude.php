@@ -77,10 +77,6 @@ function exclude_message( $msg, $type ) {
 	//  $msg = '';
 	// }
 
-	// if ( false !== strpos( $msg, "Missing @access tag 'public'" ) ) {
-	//  $msg = '';
-	// }
-
 	// if ( false !== strpos($msg, "Mismatched @param tag name") ) {
 	//  $msg = '';
 	// }
@@ -92,6 +88,10 @@ function exclude_message( $msg, $type ) {
 	// if ( false !== strpos($msg, "Wrong @access tag") ) {
 	//  $msg = '';
 	// }
+
+	if ( false !== strpos( $msg, "Missing @access tag 'public'" ) ) {
+		$msg = '';
+	}
 
 	return $msg;
 }

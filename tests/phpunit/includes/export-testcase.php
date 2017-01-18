@@ -483,10 +483,10 @@ class Export_UnitTestCase extends \WP_UnitTestCase {
 	}
 
 	function assertContainsSubstring( $substring, $array ) {
-		$array = array_filter($array, function($val) use ($substring) { 
-			return (false !== strpos($val ,$substring ) ); 
+		$array = array_filter($array, function( $val ) use ( $substring ) {
+			return (false !== strpos( strtolower( $val ) , strtolower( $substring ) ) );
 		});
-		
+
 		$this->assertTrue( !empty($array) );
 	}
 }

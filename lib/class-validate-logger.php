@@ -1,7 +1,7 @@
 <?php
 namespace WP_Parser_Validate;
 
-class WP_Parser_Validate_Logger {
+class Validate_Logger {
 
 	/**
 	 * Log Messages.
@@ -19,7 +19,7 @@ class WP_Parser_Validate_Logger {
 	 *
 	 * @var array
 	 */
-	private $format = '';
+	public $format = '';
 
 	/**
 	 * Get the current log
@@ -38,26 +38,55 @@ class WP_Parser_Validate_Logger {
 	}
 
 	/**
-	 * Flush the current log
+	 * Set format of log
+	 *
+	 * @param string  $format Type of log. Accepts 'html' or 'wp-cli'.
 	 */
 	public function set_format( $format ) {
 		$this->format = $format;
 	}
 
-
 	/**
 	 * Add log message to the log.
-	 * Groups messages by type of node.
+	 * Groups messages by type and name of node.
 	 *
 	 * @param string  $name Name of node.
 	 * @param string  $type Type of node.
 	 * @param string  $msg  Message.
 	 */
-	public function log( $name, $type, $msg ) {
+	public function log( $name, $type, $msg, $prefix = '' ) {
+
+		$prefix = $prefix ? $prefix : 'Invalid: ';
+		if ( 'wp-cli' === $this->format ) {
+			$prefix = '';
+		}
+		$msg  = ('html' === $this->format) ? lcfirst( $msg ) : $msg;
 		$type = is_hook( $type ) ? 'hook' : $type;
 		$name = strtolower( $name );
 		$name = trim( preg_replace( '/[^a-z0-9_\-]/', '', $name ) );
-		$this->log["{$type}::{$name}"][] = $msg;
+		$this->log["{$type}::{$name}"][] = $prefix . $msg;
+	}
+
+	/**
+	 * Add a warning to the log.
+	 *
+	 * @param string  $name Name of node.
+	 * @param string  $type Type of node.
+	 * @param string  $msg  Message.
+	 */
+	public function log_warning( $name, $type, $msg ) {
+		$this->log( $name, $type, $msg, 'Warning: ' );
+	}
+
+	/**
+	 * Add a warning to the log.
+	 *
+	 * @param string  $name Name of node.
+	 * @param string  $type Type of node.
+	 * @param string  $msg  Message.
+	 */
+	public function log_notice( $name, $type, $msg ) {
+		$this->log( $name, $type, $msg, 'Notice: ' );
 	}
 
 	/**

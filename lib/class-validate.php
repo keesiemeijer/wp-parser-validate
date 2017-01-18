@@ -26,7 +26,7 @@ class Validate {
 
 	public function __construct() {
 
-		$this->logger   = new WP_Parser_Validate_Logger();
+		$this->logger   = new Validate_Logger();
 		$this->docblock = new Validate_DocBlcock( $this->logger );
 
 		$this->types = array(
@@ -173,7 +173,11 @@ class Validate {
 		$msg = validate_hook_name( $node );
 		if ( $msg ) {
 			$msg .= $this->logger->log_type_message( $name_raw, $type, $parent_type, $parent_name, $line );
-			$this->logger->log( $name, $type, $msg );
+			if( 0 === strpos($msg, 'Hook name could be more succinct') ) {
+				$this->logger->log_notice( $name, $type, $msg );
+			} else {
+				$this->logger->log( $name, $type, $msg );
+			}
 		}
 
 		if ( $this->docblock->has_docblock( $node, $type, $parent_type, $parent_name ) ) {

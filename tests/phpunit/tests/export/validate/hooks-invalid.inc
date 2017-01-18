@@ -19,6 +19,19 @@ do_action_ref_array( 'no_docblock_action_ref', array( $value, $old_value ) );
 $value = apply_filters( 'invalid_concatenated_name' . $filter, $value, $old_value );
 
 /**
+ * This is a well documented dynamic filter.
+ *
+ * Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+ * Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+ *
+ * @since 2.6.0
+ *
+ * @param mixed   $value     The new, unserialized option value.
+ * @param mixed   $old_value The old option value.
+ */
+$value = apply_filters( "not_succinct_filter_name_{$this->filter['value']}", $value, $old_value );
+
+/**
  *
  *
  * @since 2.6.0
