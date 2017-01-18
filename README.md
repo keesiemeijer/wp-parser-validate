@@ -1,4 +1,4 @@
-# WP Parser Validate
+# WP Parser Validate [![Build Status](https://travis-ci.org/keesiemeijer/wp-parser-validate.svg?branch=master)](http://travis-ci.org/keesiemeijer/wp-parser-validate) #
 
 Validate the inline documentation of your functions, methods and hooks against the WordPress PHP Documentation Standards.
 
