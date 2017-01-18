@@ -48,4 +48,10 @@ After that install the dependencies using composer in the `wp-parser-validate` d
 ```bash
 composer install
 ```
-Click the index.php file in the root of the `wp-parser-validate` directory or copy the `wp-parser-validate` folder to your server and visit it in a browser. There you'll find the same form to validate content as in [the demo](https://wp-parser-validate.herokuapp.com/)
+Copy the `wp-parser-validate` folder to your server and visit it in a browser. There you'll find the same form to validate content as in [the demo](https://wp-parser-validate.herokuapp.com/)
+
+Or use the PHP built-in web server in the `wp-parser-validate` folder 
+```bash
+php -S localhost:8080
+```
+And go to http://localhost:8080 in the browser.
