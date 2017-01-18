@@ -63,33 +63,8 @@ function exclude_file( $file ) {
  * @return string       Log message or empty string to exclude the message.
  */
 function exclude_message( $msg, $type ) {
-	// Remove biggest offendors from the log
 
-	// if ( false !== strpos($msg, "Value 'void' found in") ) {
-	//  $msg = '';
-	// }
-
-	// if ( false !== strpos($msg, "Missing @since tag in DocBlock for property") ) {
-	//  $msg = '';
-	// }
-
-	// if ( false !== strpos($msg, "No DocBlock found for property") ) {
-	//  $msg = '';
-	// }
-
-	// if ( false !== strpos($msg, "Mismatched @param tag name") ) {
-	//  $msg = '';
-	// }
-
-	// if ( false !== strpos($msg, "Missing @since tag") ) {
-	//  $msg = '';
-	// }
-
-	// if ( false !== strpos($msg, "Wrong @access tag") ) {
-	//  $msg = '';
-	// }
-
-	if ( false !== strpos( $msg, "Missing @access tag 'public'" ) ) {
+	if ( false !== strpos( strtolower( $msg ), "missing @access tag 'public'" ) ) {
 		$msg = '';
 	}
 
