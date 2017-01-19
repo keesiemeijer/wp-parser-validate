@@ -13,13 +13,13 @@ class Validate_Logger {
 	private $log = array();
 
 	/**
-	 * Log Messages.
+	 * Log Format.
 	 *
 	 * @access private
 	 *
-	 * @var array
+	 * @var string
 	 */
-	public $format = '';
+	private $format = '';
 
 	/**
 	 * Get the current log
@@ -50,20 +50,18 @@ class Validate_Logger {
 	 * Add log message to the log.
 	 * Groups messages by type and name of node.
 	 *
-	 * @param string  $name Name of node.
-	 * @param string  $type Type of node.
-	 * @param string  $msg  Message.
+	 * @param string  $name   Name of node.
+	 * @param string  $type   Type of node.
+	 * @param string  $msg    Message.
+	 * @param string  $prefix Prefix for message.
 	 */
 	public function log( $name, $type, $msg, $prefix = '' ) {
-
 		$prefix = $prefix ? $prefix : 'Invalid: ';
-		if ( 'wp-cli' === $this->format ) {
-			$prefix = '';
-		}
-		$msg  = ('html' === $this->format) ? lcfirst( $msg ) : $msg;
-		$type = is_hook( $type ) ? 'hook' : $type;
-		$name = strtolower( $name );
-		$name = trim( preg_replace( '/[^a-z0-9_\-]/', '', $name ) );
+		$prefix = ( 'wp-cli' === $this->format ) ? '' : $prefix;
+		$msg    = ('html' === $this->format) ? lcfirst( $msg ) : $msg;
+		$type   = is_hook( $type ) ? 'hook' : $type;
+		$name   = strtolower( $name );
+		$name   = trim( preg_replace( '/[^a-z0-9_\-]/', '', $name ) );
 		$this->log["{$type}::{$name}"][] = $prefix . $msg;
 	}
 
@@ -129,7 +127,7 @@ class Validate_Logger {
 	 * @param integer $line        Line number of node in file.
 	 * @return string              Log message.
 	 */
-	function log_type_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
+	public function log_type_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
 		$msg = '';
 		$str = "for %s '%s'";
 		if ( 'html' === $this->format ) {
