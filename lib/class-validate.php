@@ -15,7 +15,7 @@ class Validate {
 	 *
 	 * @var object
 	 */
-	public $doc;
+	public $docblock;
 
 	/**
 	 * Types to validate.
