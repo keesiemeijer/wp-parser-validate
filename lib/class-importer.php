@@ -13,15 +13,6 @@ class Importer implements LoggerAwareInterface {
 	use LoggerAwareTrait;
 
 	/**
-	 * Validate.
-	 *
-	 * @access private
-	 *
-	 * @var object Validator object.
-	 */
-	private $validator;
-
-	/**
 	 * Validate parsed data.
 	 *
 	 * Todo: skip @ignored functions.
@@ -32,9 +23,6 @@ class Importer implements LoggerAwareInterface {
 	 * @param bool    $validate_ignored_functions Optional; defaults to false. If true, functions marked `@ignore` will be validated.
 	 */
 	public function validate( $data, $skip_sleep = false, $validate_ignored_functions = false ) {
-
-		$this->validator = new Validate;
-		$this->validator->logger->set_format( 'wp-cli' );
 
 		$this->logger->info( 'Starting validation. This will take some time' );
 
@@ -50,6 +38,9 @@ class Importer implements LoggerAwareInterface {
 			}
 		}
 
+		$validator = new Validate;
+		$validator->logger->set_format( 'wp-cli' );
+
 		foreach ( $data as $file ) {
 			if ( exclude_file( $file ) ) {
 				continue;
@@ -58,9 +49,9 @@ class Importer implements LoggerAwareInterface {
 			$this->logger->info( sprintf( 'Processing file %1$s of %2$s "%3$s".', number_format_i18n( $file_number ), number_format_i18n( $num_of_files ), $file['path'] ) );
 			$file_number ++;
 
-			$this->validator->validate_file( $file );
-			$this->display_logs();
-			$this->validator->flush_log();
+			$validator->validate_file( $file );
+			$this->display_logs( $validator->get_log() );
+			$validator->flush_log();
 			printf( "\n" );
 		}
 
@@ -84,9 +75,8 @@ class Importer implements LoggerAwareInterface {
 	 *
 	 * @access protected
 	 */
-	protected function display_logs() {
+	protected function display_logs( $logs ) {
 		$out = '';
-		$logs = $this->validator->get_log();
 
 		if ( empty( $logs ) ) {
 			return;
@@ -97,8 +87,7 @@ class Importer implements LoggerAwareInterface {
 			$type = ( isset( $type[0] ) && $type[0] ) ? $type[0] : '';
 
 			foreach ( $log as $msg ) {
-				$msg = exclude_message( $msg, $type );
-				$msg = trim( $msg );
+				$msg = trim( exclude_message( $msg, $type ) );
 				if ( $msg ) {
 					$_type = $type ? str_pad( $type . ': ', 10 ) : '';
 					$this->logger->info( $_type . $msg );
