@@ -1,8 +1,8 @@
-# WP Parser Validate [![Build Status](https://travis-ci.org/keesiemeijer/wp-parser-validate.svg?branch=master)](http://travis-ci.org/keesiemeijer/wp-parser-validate) #
+# WP Parser Validate
 
-Validate the inline documentation of your functions, methods and hooks against the WordPress [PHP Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/).
+[![Build Status](https://travis-ci.org/keesiemeijer/wp-parser-validate.svg?branch=master)](http://travis-ci.org/keesiemeijer/wp-parser-validate)
 
-Use it as a WordPress plugin (with a [WP-CLI](http://wp-cli.org/) command) or as a standalone application.
+Validate the inline documentation of your functions, methods and hooks against the WordPress [PHP Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/). Use it as a WordPress plugin (with a [WP-CLI](http://wp-cli.org/) command) or as a standalone application.
 
 Try out [this demo](https://wp-parser-validate.herokuapp.com/) to see it in action. (First load could take a while because it's on a free heroku instance)
 
@@ -48,7 +48,7 @@ After that install the dependencies using composer in the `wp-parser-validate` d
 ```bash
 composer install
 ```
-Copy the `wp-parser-validate` folder to a server and visit it in a browser.
+Copy the `wp-parser-validate` folder to a server or to your localhost and visit it in a browser.
 
 Or use the PHP built-in web server in the `wp-parser-validate` folder. 
 ```bash
