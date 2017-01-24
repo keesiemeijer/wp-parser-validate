@@ -29,7 +29,7 @@ $value = apply_filters( 'invalid_concatenated_name' . $filter, $value, $old_valu
  * @param mixed   $value     The new, unserialized option value.
  * @param mixed   $old_value The old option value.
  */
-$value = apply_filters( "not_succinct_filter_name_{$this->filter['value']}", $value, $old_value );
+$value = apply_filters( "not_succinct_filter_name_{$this->filter}", $value, $old_value );
 
 /**
  *
