@@ -172,10 +172,11 @@ class Validate {
 
 		$msg = validate_hook_name( $node );
 		if ( $msg ) {
-			$msg .= $this->logger->log_type_message( $name_raw, $type, $parent_type, $parent_name, $line );
-			if( 0 === strpos($msg, 'Hook name could be more succinct') ) {
+			if ( 0 === strpos( $msg, 'Hook name could be more succinct' ) ) {
+				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 				$this->logger->log_notice( $name, $type, $msg );
 			} else {
+				$msg .= $this->logger->log_type_message( $name_raw, $type, $parent_type, $parent_name, $line );
 				$this->logger->log( $name, $type, $msg );
 			}
 		}
@@ -222,6 +223,16 @@ class Validate {
 	 */
 	public function get_log() {
 		return $this->logger->get_log();
+	}
+
+	/**
+	 * Get the current log
+	 *
+	 * @param unknown $exclude_notices Whether to exclude notices or not. Default false.
+	 * @return array Array with log messages
+	 */
+	public function get_log_messages( $exclude_notices = false ) {
+		return $this->logger->get_log_messages( $exclude_notices );
 	}
 
 	/**
