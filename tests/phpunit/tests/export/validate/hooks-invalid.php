@@ -22,11 +22,7 @@ class Validate_Hooks extends Export_UnitTestCase {
 		$validate = new \WP_Parser_Validate\Validate();
 		$validate->validate_file( $this->export_data );
 
-		foreach ( $validate->get_log() as $logs ) {
-			foreach ( $logs as $log ) {
-				$this->logs[] = $log;
-			}
-		}
+		$this->logs = $validate->get_log_messages();
 	}
 
 	/**
@@ -123,6 +119,6 @@ class Validate_Hooks extends Export_UnitTestCase {
 	 * Test warning for not succinct hook name.
 	 */
 	public function test_filter_not_succinct() {
-		$this->assertContainsSubstring( "Hook name could be more succinct for filter '" . '"not_succinct_filter_name_{$this->filter[' . "'" . 'value' . "']}", $this->logs );
+		$this->assertContainsSubstring( "Hook name could be more succinct for filter 'not_succinct_filter_name_{" . '$this' . "->filter}'", $this->logs );
 	}
 }

@@ -21,7 +21,7 @@ class Validate_Valid_Hooks extends Export_UnitTestCase {
 
 		$validate = new \WP_Parser_Validate\Validate();
 		$validate->validate_file( $this->export_data );
-		$this->logs = $validate->get_log();
+		$this->logs = $validate->get_log_messages();
 	}
 
 	/**

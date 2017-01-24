@@ -22,11 +22,7 @@ class Validate_Functions extends Export_UnitTestCase {
 		$validate = new \WP_Parser_Validate\Validate();
 		$validate->validate_file( $this->export_data );
 
-		foreach ( $validate->get_log() as $logs ) {
-			foreach ( $logs as $log ) {
-				$this->logs[] = $log;
-			}
-		}
+		$this->logs = $validate->get_log_messages();
 	}
 
 	/**
