@@ -64,7 +64,10 @@ function exclude_file( $file ) {
  */
 function exclude_message( $msg, $type ) {
 
-	if ( false !== strpos( strtolower( $msg ), "missing @access tag 'public'" ) ) {
+	// Remove html from message (if format is html).
+	$_msg = strip_tags($msg);
+  
+	if ( false !== strpos( strtolower( $_msg ), "missing @access tag public" ) ) {
 		$msg = '';
 	}
 
