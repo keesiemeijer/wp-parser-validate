@@ -13,7 +13,7 @@ class Command extends WP_CLI_Command {
 	 * Validate Parsed Data
 	 *
 	 * @subcommand validate
-	 * @synopsis   <directory> [--quick] [--import-internal] [--user]
+	 * @synopsis   <directory> [--exclude-notices] [--import-internal] [--user]
 	 *
 	 * @param array   $args
 	 * @param array   $assoc_args
@@ -72,13 +72,10 @@ class Command extends WP_CLI_Command {
 	 */
 	protected function _do_import( array $data, $assoc_args = array(), $deprecated = false ) {
 
-		$skip_sleep      = isset( $assoc_args['quick'] );
-		$import_internal = isset( $assoc_args['import-internal'] );
-
 		// Validate the data
 		$validate = new Importer;
 		$validate->setLogger( new WP_CLI_Logger() );
-		$validate->validate( $data, $skip_sleep, $import_ignored );
+		$validate->validate( $data, $assoc_args );
 
 		WP_CLI::line();
 	}
