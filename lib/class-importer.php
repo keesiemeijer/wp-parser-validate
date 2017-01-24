@@ -18,17 +18,17 @@ class Importer implements LoggerAwareInterface {
 	 * Todo: skip @ignored functions.
 	 * Todo: add sleep calls.
 	 *
-	 * @param array   $data                       Parsed file(s) data.
-	 * @param bool    $skip_sleep                 Optional; defaults to false. If true, the sleep() calls are skipped.
-	 * @param bool    $validate_ignored_functions Optional; defaults to false. If true, functions marked `@ignore` will be validated.
+	 * @param array   $data       Parsed file(s) data.
+	 * @param array   $assoc_args Optional arguments.
 	 */
-	public function validate( $data, $skip_sleep = false, $validate_ignored_functions = false ) {
+	public function validate( $data, $assoc_args = array() ) {
 
 		$this->logger->info( 'Starting validation. This will take some time' );
 
-		$time_start   = microtime( true );
-		$file_number  = 1;
-		$num_of_files = count( $data );
+		$exclude_notices = isset( $assoc_args['exclude-notices'] ) ? true : false;
+		$time_start      = microtime( true );
+		$file_number     = 1;
+		$num_of_files    = count( $data );
 
 		// Files from wp-content and third party libraries are excluded.
 		// Get number of files (with excluded files subtracted).
@@ -50,7 +50,7 @@ class Importer implements LoggerAwareInterface {
 			$file_number ++;
 
 			$validator->validate_file( $file );
-			$this->display_logs( $validator->get_log() );
+			$this->display_logs( $validator->get_log_messages( $exclude_notices ) );
 			$validator->flush_log();
 			printf( "\n" );
 		}
@@ -73,6 +73,7 @@ class Importer implements LoggerAwareInterface {
 	/**
 	 * Display log messages.
 	 *
+	 * @param array   $logs       Logs to display.
 	 * @access protected
 	 */
 	protected function display_logs( $logs ) {
@@ -82,17 +83,8 @@ class Importer implements LoggerAwareInterface {
 			return;
 		}
 
-		foreach ( $logs as $key => $log ) {
-			$type = explode( '::', $key, 2 );
-			$type = ( isset( $type[0] ) && $type[0] ) ? $type[0] : '';
-
-			foreach ( $log as $msg ) {
-				$msg = trim( exclude_message( $msg, $type ) );
-				if ( $msg ) {
-					$_type = $type ? str_pad( $type . ': ', 10 ) : '';
-					$this->logger->info( $_type . $msg );
-				}
-			}
+		foreach ( $logs as $msg ) {
+			$this->logger->info( $msg );
 		}
 	}
 }
