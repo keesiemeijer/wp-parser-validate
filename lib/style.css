@@ -14,8 +14,7 @@ h1 {
     line-height: 29px;
     margin: 0;
     padding: 9px 0 20px;
-    color: #0e5775;
-    /*text-align: center;*/
+    color: #0e5775;    /*text-align: center;*/
 }
 h3 {
     font-size: 16px;
@@ -25,11 +24,13 @@ h3 {
     padding: 10px;
 }
 h3.valid {
-    background-color: #f7f9f7;
+    background-color: #fff;
+    color: green;
     border: 1px solid #40773f;
+    border-radius: 3px;
 }
 a {
-    color:#257090;
+    color: #257090;
 }
 .content {
     max-width: 700px;
@@ -38,7 +39,8 @@ a {
 form {
     margin-top: 2em;
 }
-.content-header, .validation-errors {
+.content-header,
+.validation-errors {
     border-bottom: 1px solid #ddd;
 }
 .content-footer {
@@ -47,17 +49,40 @@ form {
     padding-bottom: .5em;
     border-top: 1px solid #ddd;
 }
-
 .validation-errors li {
-    padding-bottom: .3em;
+    padding: .5em 0;
+    border-bottom: 1px solid #ddd;
 }
-.validation-errors li span{
-    /*font-family: Consolas, Monaco, monospace;*/
+.validation-errors li:last-of-type {
+    border-bottom: none;
+}
+li span,
+code {
     display: inline-block;
     padding: 2px 5px;
+    margin: .2em 0;
     border-radius: 3px;
     background-color: rgba(0, 0, 0, 0.04);
-
+}
+span.invalid {
+    background-color: #b92727;
+    color: #fff;
+}
+span.notice {
+    background-color:  #f3dce1;
+}
+span.warning {
+    background-color: #ee5434;
+    color: #fff;
+}
+.validation-errors li span:nth-child(2) {
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: polygon(0px 0px, 0px 0px,0px 0px, 0px 0px);
+    position: absolute !important;
+    white-space: nowrap;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
 }
 input, textarea {
     box-sizing: border-box;
@@ -66,7 +91,6 @@ label {
     display: inline-block;
     margin-bottom: 1em;
 }
-
 textarea {
     background: #f9f9f9 none repeat scroll 0 0;
     font-family: Consolas, Monaco, monospace;
