@@ -91,6 +91,7 @@ class Validate_DocBlcock {
 		$parameters = get_parameter_names( $node );
 		$doc_params = get_doc_params_key( $node, 'variable' );
 		$doc_desc   = get_doc_params_key( $node, 'content' );
+		$format     = $this->logger->format_string();
 		$continue   = true;
 
 		if ( is_hook( $type ) ) {
@@ -145,7 +146,7 @@ class Validate_DocBlcock {
 
 			// Check if variable has a description
 			if ( ! $doc_desc[ $key ] ) {
-				$msg = sprintf( "Missing description for @param '%s' in DocBlock", $doc_params[ $key ] );
+				$msg    = sprintf( "Missing description for @param {$format} in DocBlock", $doc_params[ $key ] );
 				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 				$this->logger->log( $name, $type, $msg );
 			}
@@ -186,7 +187,7 @@ class Validate_DocBlcock {
 
 				// Variable parameter not found.
 				// Todo: Better log message.
-				$msg = sprintf( "Missing @param variable '%s' in DocBlock",  $arg_name );
+				$msg = sprintf( "Missing @param variable {$format} in DocBlock",  $arg_name );
 				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 				$this->logger->log( $name, $type, $msg );
 				continue;
@@ -194,7 +195,7 @@ class Validate_DocBlcock {
 
 			// Check if variable names are mismatched.
 			if ( $arg_name !== $doc_params[ $key ] ) {
-				$msg = sprintf( "Mismatched @param tag name '%s' in DocBlock",  $doc_params[ $key ] );
+				$msg = sprintf( "Mismatched @param tag name {$format} in DocBlock",  $doc_params[ $key ] );
 				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 				$this->logger->log_notice( $name, $type, $msg );
 			}
@@ -214,14 +215,15 @@ class Validate_DocBlcock {
 		$line       = get_line( $node );
 		$visibility = get_visibility( $node );
 		$access     = get_doc_access( $node );
+		$format     = $this->logger->format_string();
 
 		if ( ( $visibility && $access ) && ( $access !== $visibility ) ) {
-			$msg = sprintf( "Wrong @access tag '%s' in DocBlock", $access );
+			$msg = sprintf( "Wrong @access tag {$format} in DocBlock", $access );
 			$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 			$this->logger->log( $name, $type, $msg );
 		}
 		if ( ! $access ) {
-			$msg = sprintf( "Missing @access tag '%s' in DocBlock", $visibility );
+			$msg = sprintf( "Missing @access tag {$format} in DocBlock", $visibility );
 			$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 			$this->logger->log( $name, $type, $msg );
 		}
@@ -293,13 +295,15 @@ class Validate_DocBlcock {
 		$name         = get_name( $node );
 		$line         = get_line( $node );
 		$return_types = get_doc_return_types( $node );
+		$format       = $this->logger->format_string();
 
 		if ( ! ( isset( $return_types[0] ) && ( 1 === count( $return_types ) ) ) ) {
 			return;
 		}
 
 		if ( 'void' === strtolower( $return_types[0] ) ) {
-			$msg = "The @return tag with value 'void' can be omitted in DocBlock";
+
+			$msg = sprintf( "The @return tag with value {$format} can be omitted in DocBlock", 'void');
 			$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
 			$this->logger->log_notice( $name, $type, $msg );
 		}
