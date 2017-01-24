@@ -47,6 +47,39 @@ class Validate_Logger {
 	}
 
 	/**
+	 * Returns string used in sprintf depending on format.
+	 */
+	public function format_string() {
+		$format = "'%s'";
+		if ( 'html' === $this->format ) {
+			$format = "<span>%s</span>";
+		}
+		return $format;
+	}
+
+	/**
+	 * Log a warning.
+	 *
+	 * @param string  $name Name of node.
+	 * @param string  $type Type of node.
+	 * @param string  $msg  Message.
+	 */
+	public function log_warning( $name, $type, $msg ) {
+		$this->log( $name, $type, $msg, 'Warning' );
+	}
+
+	/**
+	 * Log a notice.
+	 *
+	 * @param string  $name Name of node.
+	 * @param string  $type Type of node.
+	 * @param string  $msg  Message.
+	 */
+	public function log_notice( $name, $type, $msg ) {
+		$this->log( $name, $type, $msg, 'Notice' );
+	}
+
+	/**
 	 * Add log message to the log.
 	 * Groups messages by type and name of node.
 	 *
@@ -56,65 +89,77 @@ class Validate_Logger {
 	 * @param string  $prefix Prefix for message.
 	 */
 	public function log( $name, $type, $msg, $prefix = '' ) {
-		$prefix = $prefix ? $prefix : 'Invalid: ';
-		$prefix = ( 'wp-cli' === $this->format ) ? '' : $prefix;
-		$msg    = ('html' === $this->format) ? lcfirst( $msg ) : $msg;
-		$type   = is_hook( $type ) ? 'hook' : $type;
-		$name   = strtolower( $name );
-		$name   = trim( preg_replace( '/[^a-z0-9_\-]/', '', $name ) );
-		$this->log["{$type}::{$name}"][] = $prefix . $msg;
-	}
+		$html_str   = "<span class='%s'>%s</span><span>:</span> ";
+		$prefix     = $prefix ? $prefix : 'Invalid';
+		$key_prefix = trim( preg_replace( '/[^a-z0-9_\-]/', '', strtolower( $prefix ) ) );
+		$key_prefix = $key_prefix ? $key_prefix : 'unknown';
+		$key_name   = trim( preg_replace( '/[^a-z0-9_\-]/', '', strtolower( $name ) ) );
+		$key_name   = $key_name ? $key_name : 'unknown';
+		$prefix     = ( 'html' === $this->format ) ? sprintf( $html_str, $key_prefix, $prefix ) : '';
+		$type       = is_hook( $type ) ? 'hook' : $type;
 
-	/**
-	 * Add a warning to the log.
-	 *
-	 * @param string  $name Name of node.
-	 * @param string  $type Type of node.
-	 * @param string  $msg  Message.
-	 */
-	public function log_warning( $name, $type, $msg ) {
-		$this->log( $name, $type, $msg, 'Warning: ' );
-	}
-
-	/**
-	 * Add a warning to the log.
-	 *
-	 * @param string  $name Name of node.
-	 * @param string  $type Type of node.
-	 * @param string  $msg  Message.
-	 */
-	public function log_notice( $name, $type, $msg ) {
-		$this->log( $name, $type, $msg, 'Notice: ' );
+		$this->log["{$type}::{$key_name}"][ $key_prefix ][] = $prefix . $msg;
 	}
 
 	/**
 	 * Display log messages.
+	 *
+	 * @param bool    $exclude_notices Whether to exclude notices or not. Default false.
 	 */
-	public function display_logs() {
-		$out = '';
+	public function display_logs( $exclude_notices = false ) {
+		$out  = '';
+		$logs = $this->get_log_messages( $exclude_notices );
 
-		$logs = $this->log;
 		if ( empty( $logs ) ) {
 			return;
 		}
 
+		echo '<ol>';
+		foreach ( $logs as $msg ) {
+			echo '<li>' . $msg . '</li>';
+		}
+		echo '</ol>';
+	}
+
+	/**
+	 * Return log messages.
+	 *
+	 * @param boolean $exclude_notices Whether to exclude notices or not. Default false.
+	 * @return array Array with log messages.
+	 */
+	function get_log_messages( $exclude_notices = false ) {
+		$messages = array();
+		$logs     = $this->log;
+
+		if ( empty( $logs ) ) {
+			return;
+		}
+
+		$defaults = array( 'invalid' => array(), 'notice' => array() );
+
 		foreach ( $logs as $key => $log ) {
 			$type = explode( '::', $key, 2 );
 			$type = ( isset( $type[0] ) && $type[0] ) ? $type[0] : '';
+			$log  = array_merge( $defaults, $log );
+
+			if ( $exclude_notices ) {
+				$log = $log['invalid'];
+			} else {
+				$log = array_merge( $log['invalid'], $log['notice'] );
+			}
 
 			foreach ( $log as $msg ) {
-				$msg = exclude_message( $msg, $type );
-				$msg = trim( $msg );
-
+				$msg = trim( exclude_message( $msg, $type ) );
 				if ( $msg ) {
-					$out .= '<li>' . $msg . '</li>';
+					$_type = $type ? str_pad( $type . ': ', 10 ) : '';
+					$msg   = ( 'wp-cli' === $this->format ) ? $_type . $msg : $msg;
+
+					$messages[] = $msg;
 				}
 			}
 		}
 
-		if ( $out ) {
-			echo '<ul>' . $out . '</ul>';
-		}
+		return $messages;
 	}
 
 	/**
@@ -129,13 +174,11 @@ class Validate_Logger {
 	 */
 	public function log_type_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
 		$msg = '';
-		$str = "for %s '%s'";
-		if ( 'html' === $this->format ) {
-			$str = "for %s <span>%s</span>";
-		}
+		$format = $this->format_string();
+		$str = "for %s {$format}";
+
 		if ( $parent_type && $parent_name ) {
-			$str .= ( 'html' === $this->format ) ? " in %s <span>%s</span>" : " in %s '%s'";
-			$msg .= ' ' . sprintf( $str, $type, $name, $parent_type, $parent_name );
+			$msg .= ' ' . sprintf( $str . " in %s {$format}", $type, $name, $parent_type, $parent_name );
 		} else {
 			$msg .= ' ' . sprintf( $str, $type, $name );
 		}
