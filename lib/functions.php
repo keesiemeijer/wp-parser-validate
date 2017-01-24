@@ -73,16 +73,20 @@ function get_validation_html( $code = '' ) {
 	$validate = new Validate;
 	$validate->logger->set_format( 'html' );
 	$validate->validate_file( $data );
-	$log = $validate->logger->get_log();
+	$log = $validate->logger->get_log_messages( true );
+
+	ob_start();
+	$validate->logger->display_logs();
+	$display = ob_get_contents();
+	ob_end_clean();
 
 	if ( !empty( $log ) ) {
 		$out .= "<h3>Code did not pass validation</h3>";
-		ob_start();
-		$validate->logger->display_logs();
-		$out .= ob_get_clean();
+		$out .= $display;
 
 	} else {
 		$out .= "<h3 class='valid'>Passed Validation!</h3>";
+		$out .= $display;
 	}
 
 	return $out;
