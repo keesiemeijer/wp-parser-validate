@@ -184,7 +184,7 @@ class Validate_Logger {
 		}
 
 		if ( $line ) {
-			$line_str .= sprintf( "line %d", $line );
+			$line_str = sprintf( "line %d", $line );
 			if ( 'html' === $this->format ) {
 				$line_str = sprintf( '<span class="line-number" data-line-number="%d">%s</span>', $line, $line_str );
 			}
