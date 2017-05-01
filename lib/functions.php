@@ -81,11 +81,11 @@ function get_validation_html( $code = '' ) {
 	ob_end_clean();
 
 	if ( !empty( $log ) ) {
-		$out .= "<h3>Code did not pass validation</h3>";
+		$out .= "<h3>Documentation did not pass validation</h3>";
 		$out .= $display;
 
 	} else {
-		$out .= "<h3 class='valid'>Passed Validation!</h3>";
+		$out .= "<h3 class='valid'>Documentation Passed Validation!</h3>";
 		$out .= $display;
 	}
 

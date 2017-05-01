@@ -19,4 +19,4 @@ if ( isset( $_REQUEST['validate_code'] ) && isset( $_REQUEST['code_content'] ) )
 	}
 }
 
-include dirname( __FILE__ ) . "/lib/form.php";
+include dirname( __FILE__ ) . "/view/index.php";

@@ -64,6 +64,13 @@ code {
     border-radius: 3px;
     background-color: rgba(0, 0, 0, 0.04);
 }
+.line-number {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    border-radius: none;
+    background-color: #fff;
+}
 span.invalid {
     background-color: #b92727;
     color: #fff;

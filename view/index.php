@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Validate Documentation</title>
-		<link rel="stylesheet" href="lib/style.css" type="text/css">
+		<link rel="stylesheet" href="/view/style.css" type="text/css">
 		<meta name="description" content="WordPress Documentation Validator" />
 	</head>
 	<body>
@@ -32,5 +32,6 @@
 				<p><a href="https://github.com/keesiemeijer/wp-parser-validate">GitHub repository</a></p>
 			</div>
 		</div>
+		<script type='text/javascript' src='/view/line-number.js'></script>
 	</body>
 </html>
