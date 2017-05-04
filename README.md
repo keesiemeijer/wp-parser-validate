@@ -23,23 +23,15 @@ wp parser validate /path/to/source/code
 
 ## Installing
 
-Installing this package requires WP-CLI v0.23.0 or greater. Update to the latest stable release with wp cli update. When this package is added to the WP-CLI [package index](http://wp-cli.org/package-index/) you can install it directly through WP-CLI. For now use this method
-
-Clone the repository:
+Installing this package requires WP-CLI v0.23.0 or greater. Update to the latest stable release with `wp cli update`. 
 
 ```bash
-git clone https://github.com/keesiemeijer/wp-parser-validate 
-```
-
-And install it with WP-CLI:
-
-```bash
-wp package install path/to/wp-parser-validate/directory
+wp package install https://github.com/keesiemeijer/wp-parser-validate.git
 ```
 
 ## Web App
 
-To install the web app Clone the repository
+To install the web app clone this repository
 ```bash
 git clone https://github.com/keesiemeijer/wp-parser-validate
 ```
@@ -49,7 +41,7 @@ Go to the `wp-parser-validate` directory
 cd wp-parser-validate
 ```
 
-After that install the dependencies using composer:
+Install the dependencies using composer:
 ```bash
 composer install
 ```
