@@ -17,9 +17,9 @@
 	},
 	"require"    : {
 		"php"                      : ">=5.4",
-		"scribu/lib-posts-to-posts": "dev-master@dev",
-		"scribu/scb-framework"     : "dev-master@dev",
-		"wordpress/phpdoc-parser"  : "dev-master@dev"
+		"scribu/lib-posts-to-posts": "dev-master",
+		"scribu/scb-framework"     : "dev-master",
+		"wordpress/phpdoc-parser"  : "dev-master"
 	},
 	"extra": {
 		"installer-paths": {
