@@ -18,12 +18,13 @@ class Importer implements LoggerAwareInterface {
 	 * Todo: skip @ignored functions.
 	 * Todo: add sleep calls.
 	 *
-	 * @param array   $data       Parsed file(s) data.
-	 * @param array   $assoc_args Optional arguments.
+	 * @param array $data       Parsed file(s) data.
+	 * @param array $assoc_args Optional arguments.
 	 */
 	public function validate( $data, $assoc_args = array() ) {
 
-		$this->logger->info( 'Starting validation. This will take some time' );
+		$this->logger->info( 'Starting validation...' );
+		printf( "\n" );
 
 		$exclude_notices = isset( $assoc_args['exclude-notices'] ) ? true : false;
 		$time_start      = microtime( true );
@@ -58,7 +59,7 @@ class Importer implements LoggerAwareInterface {
 		$time_end = microtime( true );
 		$time = $time_end - $time_start;
 
-		$this->logger->info( 'Time: '.$time );
+		$this->logger->info( 'Time: ' . $time );
 		if ( empty( $this->errors ) ) {
 			$this->logger->notice( 'Validation complete!' );
 		} else {
@@ -73,7 +74,7 @@ class Importer implements LoggerAwareInterface {
 	/**
 	 * Display log messages.
 	 *
-	 * @param array   $logs       Logs to display.
+	 * @param array $logs Logs to display.
 	 * @access protected
 	 */
 	protected function display_logs( $logs ) {
