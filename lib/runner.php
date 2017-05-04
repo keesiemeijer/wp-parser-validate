@@ -1,4 +1,7 @@
 <?php
+/**
+ * Exports extra hook attributes not imported by the WordPress/phpdoc-parser
+ */
 
 namespace WP_Parser_Validate;
 
@@ -12,7 +15,7 @@ use phpDocumentor\Reflection\ReflectionAbstract;
 /**
  *
  *
- * @param string  $directory
+ * @param string $directory
  *
  * @return array|\WP_Error
  */
@@ -45,344 +48,118 @@ function get_wp_files( $directory ) {
 /**
  *
  *
- * @param array   $files
- * @param string  $root
+ * @param array  $files
+ * @param string $root
  *
  * @return array
  */
 function parse_files( $files, $root, $content = '' ) {
 	$output = array();
 
-	foreach ( $files as $filename ) {
+	$parser_data = \WP_Parser\parse_files( $files, $root );
+	$parser_data = parse_extra_hook_data( $files, $root, $parser_data );
+
+	return $parser_data;
+}
+
+function parse_extra_hook_data( $files, $root, $parser_data ) {
+
+	foreach ( $files as $key => $filename ) {
+
 		$file = new File_Reflector( $filename );
 
 		$path = ltrim( substr( $filename, strlen( $root ) ), DIRECTORY_SEPARATOR );
 		$file->setFilename( $path );
+		$path = str_replace( DIRECTORY_SEPARATOR, '/', $file->getFilename() );
 
-
-		if ( $content && ( 1 === count( $files ) ) ) {
-			$file->setFileContent( $content );
+		if ( ! ( isset( $parser_data[ $key ]['path'] ) && ( $path === $parser_data[ $key ]['path'] ) ) ) {
+			continue;
 		}
 
 		$file->process();
 
-		// TODO proper exporter
-		$out = array(
-			'file' => export_docblock( $file ),
-			'path' => str_replace( DIRECTORY_SEPARATOR, '/', $file->getFilename() ),
-			'root' => $root,
-		);
-
-		if ( ! empty( $file->uses ) ) {
-			$out['uses'] = export_uses( $file->uses );
+		$parsed_file_hooks = isset( $parser_data[ $key ]['hooks'] ) && ! empty( $parser_data[ $key ]['hooks'] );
+		if ( ! empty( $file->uses['hooks'] ) && $parsed_file_hooks ) {
+			$parser_data[ $key ]['hooks'] = export_hooks_extra( $file->uses['hooks'], $parser_data[ $key ]['hooks'] );
 		}
 
-		foreach ( $file->getIncludes() as $include ) {
-			$out['includes'][] = array(
-				'name' => $include->getName(),
-				'line' => $include->getLineNumber(),
-				'type' => $include->getType(),
-			);
-		}
+		foreach ( $file->getFunctions() as $f_key => $function ) {
 
-		foreach ( $file->getConstants() as $constant ) {
-			$out['constants'][] = array(
-				'name'  => $constant->getShortName(),
-				'line'  => $constant->getLineNumber(),
-				'value' => $constant->getValue(),
-			);
-		}
+			if ( ! isset( $parser_data[ $key ]['functions'][ $f_key ]['hooks'] ) ) {
+				continue;
+			}
 
-		if ( ! empty( $file->uses['hooks'] ) ) {
-			$out['hooks'] = export_hooks( $file->uses['hooks'] );
-		}
+			if ( empty( $parser_data[ $key ]['functions'][ $f_key ]['hooks'] ) ) {
+				continue;
+			}
 
-		foreach ( $file->getFunctions() as $function ) {
-			$func = array(
-				'name'      => $function->getShortName(),
-				'namespace' => $function->getNamespace(),
-				'aliases'   => $function->getNamespaceAliases(),
-				'line'      => $function->getLineNumber(),
-				'end_line'  => $function->getNode()->getAttribute( 'endLine' ),
-				'arguments' => export_arguments( $function->getArguments() ),
-				'doc'       => export_docblock( $function ),
-				'hooks'     => array(),
-			);
+			$function_hooks = $parser_data[ $key ]['functions'][ $f_key ]['hooks'];
 
 			if ( ! empty( $function->uses ) ) {
-				$func['uses'] = export_uses( $function->uses );
 
 				if ( ! empty( $function->uses['hooks'] ) ) {
-					$func['hooks'] = export_hooks( $function->uses['hooks'] );
-				}
-			}
-
-			$out['functions'][] = $func;
-		}
-
-		foreach ( $file->getClasses() as $class ) {
-			$class_data = array(
-				'name'       => $class->getShortName(),
-				'namespace'  => $class->getNamespace(),
-				'line'       => $class->getLineNumber(),
-				'end_line'   => $class->getNode()->getAttribute( 'endLine' ),
-				'final'      => $class->isFinal(),
-				'abstract'   => $class->isAbstract(),
-				'extends'    => $class->getParentClass(),
-				'implements' => $class->getInterfaces(),
-				'properties' => export_properties( $class->getProperties() ),
-				'methods'    => export_methods( $class->getMethods() ),
-				'doc'        => export_docblock( $class ),
-			);
-
-			$out['classes'][] = $class_data;
-		}
-
-		$output[] = $out;
-	}
-
-	return $output;
-}
-
-/**
- *
- *
- * @param BaseReflector|ReflectionAbstract $element
- *
- * @return array
- */
-function export_docblock( $element ) {
-	$docblock = $element->getDocBlock();
-	if ( ! $docblock ) {
-		return array(
-			'description'      => '',
-			'long_description' => '',
-			'tags'             => array(),
-		);
-	}
-
-	$output = array(
-		'description'      => preg_replace( '/[\n\r]+/', ' ', $docblock->getShortDescription() ),
-		'long_description' => preg_replace( '/[\n\r]+/', ' ', $docblock->getLongDescription()->getFormattedContents() ),
-		'tags'             => array(),
-	);
-
-	foreach ( $docblock->getTags() as $tag ) {
-		$tag_data = array(
-			'name'    => $tag->getName(),
-			'content' => preg_replace( '/[\n\r]+/', ' ', format_description( $tag->getDescription() ) ),
-		);
-		if ( method_exists( $tag, 'getTypes' ) ) {
-			$tag_data['types'] = $tag->getTypes();
-		}
-		if ( method_exists( $tag, 'getLink' ) ) {
-			$tag_data['link'] = $tag->getLink();
-		}
-		if ( method_exists( $tag, 'getVariableName' ) ) {
-			$tag_data['variable'] = $tag->getVariableName();
-		}
-		if ( method_exists( $tag, 'getReference' ) ) {
-			$tag_data['refers'] = $tag->getReference();
-		}
-		if ( method_exists( $tag, 'getVersion' ) ) {
-			// Version string.
-			$version = $tag->getVersion();
-			if ( ! empty( $version ) ) {
-				$tag_data['content'] = $version;
-			}
-			// Description string.
-			if ( method_exists( $tag, 'getDescription' ) ) {
-				$description = preg_replace( '/[\n\r]+/', ' ', format_description( $tag->getDescription() ) );
-				if ( ! empty( $description ) ) {
-					$tag_data['description'] = $description;
+					$parser_data[ $key ]['functions'][ $f_key ]['hooks'] =  export_hooks_extra( $function->uses['hooks'], $function_hooks );
 				}
 			}
 		}
-		$output['tags'][] = $tag_data;
+
+		foreach ( $file->getClasses() as $c_key => $class ) {
+
+			if ( ! isset( $parser_data[ $key ]['classes'][ $c_key ]['methods'] ) ) {
+				continue;
+			}
+
+
+			$i = -1;
+			foreach ( $class->getMethods() as $m_key => $method ) {
+
+				++$i;
+
+				if ( ! isset( $parser_data[ $key ]['classes'][ $c_key ]['methods'][ $i ]['hooks'] ) ) {
+					continue;
+				}
+
+
+				if ( empty( $parser_data[ $key ]['classes'][ $c_key ]['methods'][ $i ]['hooks'] ) ) {
+					continue;
+				}
+
+				$method_hooks = $parser_data[ $key ]['classes'][ $c_key ]['methods'][ $i ]['hooks'];
+
+				if ( ! empty( $method->uses ) ) {
+
+					if ( ! empty( $method->uses['hooks'] ) ) {
+						$parser_data[ $key ]['classes'][ $c_key ]['methods'][ $i ]['hooks'] =  export_hooks_extra( $method->uses['hooks'], $method_hooks );
+					}
+				}
+			}
+		}
 	}
 
-	return $output;
+	return $parser_data;
 }
 
 /**
- *
+ * Adds name_raw and concat hook data
  *
  * @param Hook_Reflector[] $hooks
  *
  * @return array
  */
-function export_hooks( array $hooks ) {
-	$out = array();
+function export_hooks_extra( array $hooks, $parser_data_hooks  ) {
 
-	foreach ( $hooks as $hook ) {
-		$out[] = array(
-			'name'      => $hook->getName(),
-			'name_raw'  => $hook->getNameRaw(),
-			'concat'    => $hook->is_name_concatenated(),
-			'line'      => $hook->getLineNumber(),
-			'end_line'  => $hook->getNode()->getAttribute( 'endLine' ),
-			'type'      => $hook->getType(),
-			'arguments' => $hook->getArgs(),
-			'doc'       => export_docblock( $hook ),
-		);
-	}
-
-	return $out;
-}
-
-/**
- *
- *
- * @param ArgumentReflector[] $arguments
- *
- * @return array
- */
-function export_arguments( array $arguments ) {
-	$output = array();
-
-	foreach ( $arguments as $argument ) {
-		$output[] = array(
-			'name'    => $argument->getName(),
-			'default' => $argument->getDefault(),
-			'type'    => $argument->getType(),
-		);
-	}
-
-	return $output;
-}
-
-/**
- *
- *
- * @param PropertyReflector[] $properties
- *
- * @return array
- */
-function export_properties( array $properties ) {
-	$out = array();
-
-	foreach ( $properties as $property ) {
-		$out[] = array(
-			'name'        => $property->getName(),
-			'line'        => $property->getLineNumber(),
-			'end_line'    => $property->getNode()->getAttribute( 'endLine' ),
-			'default'     => $property->getDefault(),
-			//   'final' => $property->isFinal(),
-			'static'      => $property->isStatic(),
-			'visibility'  => $property->getVisibility(),
-			'doc'         => export_docblock( $property ),
-		);
-	}
-
-	return $out;
-}
-
-/**
- *
- *
- * @param MethodReflector[] $methods
- *
- * @return array
- */
-function export_methods( array $methods ) {
-	$output = array();
-
-	foreach ( $methods as $method ) {
-
-		$method_data = array(
-			'name'       => $method->getShortName(),
-			'namespace'  => $method->getNamespace(),
-			'aliases'    => $method->getNamespaceAliases(),
-			'line'       => $method->getLineNumber(),
-			'end_line'   => $method->getNode()->getAttribute( 'endLine' ),
-			'final'      => $method->isFinal(),
-			'abstract'   => $method->isAbstract(),
-			'static'     => $method->isStatic(),
-			'visibility' => $method->getVisibility(),
-			'arguments'  => export_arguments( $method->getArguments() ),
-			'doc'        => export_docblock( $method ),
-		);
-
-		if ( ! empty( $method->uses ) ) {
-			$method_data['uses'] = export_uses( $method->uses );
-
-			if ( ! empty( $method->uses['hooks'] ) ) {
-				$method_data['hooks'] = export_hooks( $method->uses['hooks'] );
-			}
+	foreach ( $hooks as $key => $hook ) {
+		if ( ! isset( $parser_data_hooks[ $key ]['name'] ) ) {
+			continue;
 		}
 
-		$output[] = $method_data;
-	}
-
-	return $output;
-}
-
-/**
- * Export the list of elements used by a file or structure.
- *
- * @param array   $uses {
- *        @type Function_Call_Reflector[] $functions The functions called.
- * }
- *
- * @return array
- */
-function export_uses( array $uses ) {
-	$out = array();
-
-	// Ignore hooks here, they are exported separately.
-	unset( $uses['hooks'] );
-
-	foreach ( $uses as $type => $used_elements ) {
-
-		/** @var MethodReflector|FunctionReflector $element */
-		foreach ( $used_elements as $element ) {
-
-			$name = $element->getName();
-
-			switch ( $type ) {
-			case 'methods':
-				$out[ $type ][] = array(
-					'name'     => $name[1],
-					'class'    => $name[0],
-					'static'   => $element->isStatic(),
-					'line'     => $element->getLineNumber(),
-					'end_line' => $element->getNode()->getAttribute( 'endLine' ),
-				);
-				break;
-
-			default:
-			case 'functions':
-				$out[ $type ][] = array(
-					'name'     => $name,
-					'line'     => $element->getLineNumber(),
-					'end_line' => $element->getNode()->getAttribute( 'endLine' ),
-				);
-
-				if ( '_deprecated_file' === $name || '_deprecated_function' === $name || '_deprecated_argument' === $name ) {
-					$arguments = $element->getNode()->args;
-
-					$out[ $type ][0]['deprecation_version'] = $arguments[1]->value->value;
-				}
-
-				break;
-			}
+		if ( $hook->getName() !== $parser_data_hooks[ $key ]['name'] ) {
+			continue;
 		}
+
+		$parser_data_hooks[ $key ]['name_raw'] = $hook->getNameRaw();
+		$parser_data_hooks[ $key ]['concat']   = $hook->is_name_concatenated();
 	}
 
-	return $out;
-}
-
-/**
- * Format the given description with Markdown.
- *
- * @param string $description Description.
- * @return string Description as Markdown if the Parsedown class exists, otherwise return
- *                the given description text.
- */
-function format_description( $description ) {
-	if ( class_exists( 'Parsedown' ) ) {
-		$parsedown   = \Parsedown::instance();
-		$description = $parsedown->line( $description );
-	}
-	return $description;
+	return $parser_data_hooks;
 }
