@@ -25,14 +25,14 @@ class File_Reflector extends FileReflector {
 	/**
 	 * List of elements used in the current class scope, indexed by method.
 	 *
-	 * @var array[][] {@see \WP_Parser_Validate\File_Reflector::$uses}
+	 * @var array[][] {@see \WP_Parser\File_Reflector::$uses}
 	 */
 	protected $method_uses_queue = array();
 
 	/**
 	 * Stack of classes/methods/functions currently being parsed.
 	 *
-	 * @see \WP_Parser_Validate\FileReflector::getLocation()
+	 * @see \WP_Parser\FileReflector::getLocation()
 	 * @var \phpDocumentor\Reflection\BaseReflector[]
 	 */
 	protected $location = array();
@@ -68,15 +68,15 @@ class File_Reflector extends FileReflector {
 
 		switch ( $node->getType() ) {
 			// Add classes, functions, and methods to the current location stack
-		case 'Stmt_Class':
-		case 'Stmt_Function':
-		case 'Stmt_ClassMethod':
+			case 'Stmt_Class':
+			case 'Stmt_Function':
+			case 'Stmt_ClassMethod':
 			array_push( $this->location, $node );
 			break;
 
 			// Parse out hook definitions and function calls and add them to the queue.
-		case 'Expr_FuncCall':
-			$function = new Function_Call_Reflector( $node, $this->context );
+			case 'Expr_FuncCall':
+			$function = new \WP_Parser\Function_Call_Reflector( $node, $this->context );
 
 			// Add the call to the list of functions used in this scope.
 			$this->getLocation()->uses['functions'][] = $function;
@@ -95,24 +95,24 @@ class File_Reflector extends FileReflector {
 			break;
 
 			// Parse out method calls, so we can export where methods are used.
-		case 'Expr_MethodCall':
-			$method = new Method_Call_Reflector( $node, $this->context );
+			case 'Expr_MethodCall':
+			$method = new \WP_Parser\Method_Call_Reflector( $node, $this->context );
 
 			// Add it to the list of methods used in this scope.
 			$this->getLocation()->uses['methods'][] = $method;
 			break;
 
 			// Parse out method calls, so we can export where methods are used.
-		case 'Expr_StaticCall':
-			$method = new Static_Method_Call_Reflector( $node, $this->context );
+			case 'Expr_StaticCall':
+			$method = new \WP_Parser\Static_Method_Call_Reflector( $node, $this->context );
 
 			// Add it to the list of methods used in this scope.
 			$this->getLocation()->uses['methods'][] = $method;
 			break;
 
 			// Parse out `new Class()` calls as uses of Class::__construct().
-		case 'Expr_New':
-			$method = new \WP_Parser_Validate\Method_Call_Reflector( $node, $this->context );
+			case 'Expr_New':
+			$method = new \WP_Parser\Method_Call_Reflector( $node, $this->context );
 
 			// Add it to the list of methods used in this scope.
 			$this->getLocation()->uses['methods'][] = $method;
@@ -144,7 +144,7 @@ class File_Reflector extends FileReflector {
 		parent::leaveNode( $node );
 
 		switch ( $node->getType() ) {
-		case 'Stmt_Class':
+			case 'Stmt_Class':
 			$class = end( $this->classes );
 			if ( ! empty( $this->method_uses_queue ) ) {
 				/** @var Reflection\ClassReflector\MethodReflector $method */
@@ -170,11 +170,11 @@ class File_Reflector extends FileReflector {
 			array_pop( $this->location );
 			break;
 
-		case 'Stmt_Function':
+			case 'Stmt_Function':
 			end( $this->functions )->uses = array_pop( $this->location )->uses;
 			break;
 
-		case 'Stmt_ClassMethod':
+			case 'Stmt_ClassMethod':
 			$method = array_pop( $this->location );
 
 			/*
@@ -189,6 +189,8 @@ class File_Reflector extends FileReflector {
 	}
 
 	/**
+	 *
+	 *
 	 * @param \PHPParser_Node $node
 	 *
 	 * @return bool
@@ -212,6 +214,8 @@ class File_Reflector extends FileReflector {
 	}
 
 	/**
+	 *
+	 *
 	 * @return File_Reflector
 	 */
 	protected function getLocation() {
@@ -219,6 +223,8 @@ class File_Reflector extends FileReflector {
 	}
 
 	/**
+	 *
+	 *
 	 * @param \PHPParser_Node $node
 	 *
 	 * @return bool
@@ -227,9 +233,5 @@ class File_Reflector extends FileReflector {
 		return parent::isNodeDocumentable( $node )
 			|| ( $node instanceof \PHPParser_Node_Expr_FuncCall
 			&& $this->isFilter( $node ) );
-	}
-
-	function setFileContent( $content ) {
-		$this->contents = $content;
 	}
 }

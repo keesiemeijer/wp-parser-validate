@@ -19,7 +19,6 @@ class Hook_Reflector extends BaseReflector {
 		$printer = new PHPParser_PrettyPrinter_Default;
 		return $this->cleanupName( $printer->prettyPrintExpr( $this->node->args[0]->value ) );
 	}
-
 	/**
 	 *
 	 *
@@ -43,10 +42,11 @@ class Hook_Reflector extends BaseReflector {
 		return false;
 	}
 
+
 	/**
 	 *
 	 *
-	 * @param string  $name
+	 * @param string $name
 	 *
 	 * @return string
 	 */
@@ -92,13 +92,13 @@ class Hook_Reflector extends BaseReflector {
 	public function gettype() {
 		$type = 'filter';
 		switch ( (string) $this->node->name ) {
-		case 'do_action':
+			case 'do_action':
 			$type = 'action';
 			break;
-		case 'do_action_ref_array':
+			case 'do_action_ref_array':
 			$type = 'action_reference';
 			break;
-		case 'apply_filters_ref_array':
+			case 'apply_filters_ref_array':
 			$type = 'filter_reference';
 			break;
 		}
