@@ -18,12 +18,6 @@ include( __DIR__ . '/../../../vendor/autoload.php' );
  */
 require_once getenv( 'WP_TESTS_DIR' ) . '/includes/functions.php';
 
-tests_add_filter( 'muplugins_loaded', function() {
-	$plugin_file = dirname( dirname( dirname( __DIR__ ) ) ) . '/plugin.php';
-	include( $plugin_file );
-	do_action( 'activate_' . plugin_basename( $plugin_file ) );
-});
-
 /**
  * Sets up the WordPress test environment.
  *

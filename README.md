@@ -2,49 +2,54 @@
 
 [![Build Status](https://travis-ci.org/keesiemeijer/wp-parser-validate.svg?branch=master)](http://travis-ci.org/keesiemeijer/wp-parser-validate)
 
-Validate the inline documentation of your functions, methods and hooks against the WordPress [PHP Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/). Use it as a WordPress plugin (with a [WP-CLI](http://wp-cli.org/) command) or as a standalone application.
+A [WP-CLI package](http://wp-cli.org/package-index/) to validate the inline documentation of your functions, methods and hooks against the WordPress [PHP Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/).
 
-Try out [this demo](https://wp-parser-validate.herokuapp.com/) to see it in action. (First load could take a while because it's on a free heroku instance)
+It can also be used as a web app. Check out [this demo](https://wp-parser-validate.herokuapp.com/) to see it in action. (First load could take a while because it's on a free heroku instance)
 
-Check out [what's currently being validated](https://github.com/keesiemeijer/wp-parser-validate/wiki/What-is-validated).
 
-This plugin is based on the [WP Parser](https://github.com/WordPress/phpdoc-parser) and parses files the same a the parser does.
+See [what's currently being validated](https://github.com/keesiemeijer/wp-parser-validate/wiki/What-is-validated) by this package.
+
+This plugin uses the [WP Parser](https://github.com/WordPress/phpdoc-parser) to parse files.
+
+## Usage
+```bash
+wp parser validate /path/to/source/code
+```
 
 ## Requirements
 * PHP 5.4+
 * [Composer](https://getcomposer.org/)
 * [WP CLI](http://wp-cli.org/)
 
-## Running The Plugin
+## Installing
 
-Clone the repository into your WordPress plugins directory:
+Installing this package requires WP-CLI v0.23.0 or greater. Update to the latest stable release with wp cli update. When this package is added to the WP-CLI [package index](http://wp-cli.org/package-index/) you can install it directly through WP-CLI. For now use this method
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/keesiemeijer/wp-parser-validate 
 ```
 
-After that install the dependencies using composer in the parser directory:
+And install it with WP-CLI:
 
 ```bash
-composer install
+wp package install path/to/wp-parser-validate/directory
 ```
 
-Activate the plugin:
+## Web App
 
-    wp plugin activate wp-parser-validate
-
-In your site's directory:
-
-    wp parser validate /path/to/source/code
-
-## Running it as a standalone application
-
-Clone the repository
+To install the web app Clone the repository
 ```bash
-git clone https://github.com/keesiemeijer/wp-parser-validate 
+git clone https://github.com/keesiemeijer/wp-parser-validate
 ```
 
-After that install the dependencies using composer in the `wp-parser-validate` directory:
+Go to the `wp-parser-validate` directory
+```bash
+cd wp-parser-validate
+```
+
+After that install the dependencies using composer:
 ```bash
 composer install
 ```

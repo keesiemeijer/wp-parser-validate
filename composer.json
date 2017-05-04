@@ -1,8 +1,8 @@
 {
 	"name"       : "keesiemeijer/wp-parser-validate",
-	"description": "Validate inline documentation",
+	"description": "Validate inline documentation for WordPress code standards",
 	"keywords"   : ["wordpress"],
-	"type"       : "wordpress-plugin",
+	"type"       : "wp-cli-package",
 	"homepage"   : "https://github.com/keesiemeijer/wp-parser-validate",
 	"license"    : "GPL-2.0+",
 	"authors"    : [
@@ -10,10 +10,6 @@
 			"name"    : "keesiemeijer",
 			"homepage": "https://github.com/keesiemeijer",
 			"role"    : "Developer"
-		},
-		{
-			"name"    : "Contributors",
-			"homepage": "https://github.com/WordPress/phpdoc-parser/graphs/contributors"
 		}
 	],
 	"support"    : {
@@ -21,18 +17,17 @@
 	},
 	"require"    : {
 		"php"                      : ">=5.4",
-		"composer/installers"      : "~1.0",
 		"scribu/lib-posts-to-posts": "dev-master@dev",
 		"scribu/scb-framework"     : "dev-master@dev",
 		"wordpress/phpdoc-parser"  : "dev-master@dev"
 	},
 	"extra": {
-        "installer-paths": {
-            "vendor/{$name}": ["wordpress/phpdoc-parser"]
-        }
-    },
+		"installer-paths": {
+			"vendor/{$name}": ["wordpress/phpdoc-parser"]
+		}
+	},
 	"autoload"   : {
 		"classmap": ["lib","validate"],
-		"files"   : ["lib/runner.php", "validate/nodes.php", "validate/exclude.php", "validate/functions.php", "view/functions.php"]
+		"files"   : ["parser-validate-command.php", "lib/runner.php", "validate/nodes.php", "validate/exclude.php", "validate/functions.php", "view/functions.php"]
 	}
 }
