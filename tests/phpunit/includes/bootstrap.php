@@ -35,4 +35,3 @@ tests_add_filter( 'muplugins_loaded', function() {
 require getenv( 'WP_TESTS_DIR' ) . '/includes/bootstrap.php';
 
 include( __DIR__ . '/export-testcase.php' );
-include( __DIR__ . '/testcases/import.php' );
