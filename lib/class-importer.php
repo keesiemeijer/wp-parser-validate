@@ -1,5 +1,5 @@
 <?php
-namespace WP_Parser_Validate;
+namespace keesiemeijer\WP_Parser_Validate;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

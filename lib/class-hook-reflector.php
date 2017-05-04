@@ -1,6 +1,6 @@
 <?php
 
-namespace WP_Parser_Validate;
+namespace keesiemeijer\WP_Parser_Validate;
 
 use phpDocumentor\Reflection\BaseReflector;
 use PHPParser_PrettyPrinter_Default;

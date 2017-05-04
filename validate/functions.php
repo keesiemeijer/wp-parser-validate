@@ -1,5 +1,5 @@
 <?php
-namespace WP_Parser_Validate;
+namespace keesiemeijer\WP_Parser_Validate;
 
 /**
  * Whether the phpdoc-parser is installed as a dependency.

@@ -1,5 +1,5 @@
 <?php
-namespace WP_Parser_Validate;
+namespace keesiemeijer\WP_Parser_Validate;
 
 function get_name( $node ) {
 	return isset( $node['name'] ) ?  trim( $node['name'] ) : '';

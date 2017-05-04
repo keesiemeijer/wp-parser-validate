@@ -4,7 +4,7 @@
  * A parent test case class for the data export tests.
  */
 
-namespace WP_Parser_Validate\Tests;
+namespace keesiemeijer\WP_Parser_Validate\Tests;
 
 /**
  * Parent test case for data export tests.
@@ -28,7 +28,7 @@ class Export_UnitTestCase extends \WP_UnitTestCase {
 		$file = rtrim( $file, 'php' ) . 'inc';
 		$path = dirname( $file );
 
-		$export_data = \WP_Parser_Validate\parse_files( array( $file ), $path );
+		$export_data = \keesiemeijer\WP_Parser_Validate\parse_files( array( $file ), $path );
 
 		$this->export_data = $export_data[0];
 	}

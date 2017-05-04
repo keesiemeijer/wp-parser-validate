@@ -3,7 +3,7 @@
  * A test case for validating docblocks.
  */
 
-namespace WP_Parser_Validate\Tests;
+namespace keesiemeijer\WP_Parser_Validate\Tests;
 
 /**
  * Validate docblocks for hooks.
@@ -19,7 +19,7 @@ class Validate_Hooks extends Export_UnitTestCase {
 
 		parent::setUp();
 
-		$validate = new \WP_Parser_Validate\Validate();
+		$validate = new \keesiemeijer\WP_Parser_Validate\Validate();
 		$validate->validate_file( $this->export_data );
 
 		$this->logs = $validate->get_log_messages();

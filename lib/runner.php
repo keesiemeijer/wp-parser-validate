@@ -3,7 +3,7 @@
  * Exports extra hook attributes not imported by the WordPress/phpdoc-parser
  */
 
-namespace WP_Parser_Validate;
+namespace keesiemeijer\WP_Parser_Validate;
 
 use phpDocumentor\Reflection\BaseReflector;
 use phpDocumentor\Reflection\ClassReflector\MethodReflector;
