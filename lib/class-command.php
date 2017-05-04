@@ -5,7 +5,7 @@ use WP_CLI;
 use WP_CLI_Command;
 
 /**
- * Converts PHPDoc markup into a template ready for import to a WordPress blog.
+ * Converts PHPDoc markup into a template ready validation.
  */
 class Command extends WP_CLI_Command {
 
@@ -13,10 +13,10 @@ class Command extends WP_CLI_Command {
 	 * Validate Parsed Data
 	 *
 	 * @subcommand validate
-	 * @synopsis   <directory> [--exclude-notices] [--import-internal] [--user]
+	 * @synopsis   <directory> [--exclude-notices]
 	 *
-	 * @param array   $args
-	 * @param array   $assoc_args
+	 * @param array $args
+	 * @param array $assoc_args
 	 */
 	public function validate( $args, $assoc_args ) {
 		list( $directory ) = $args;
@@ -29,7 +29,10 @@ class Command extends WP_CLI_Command {
 
 		WP_CLI::line();
 
-		$assoc_args['validate'] = true;
+		if ( ! is_wp_parser_loaded() ) {
+			WP_CLI::error( sprintf( "WordPress/phpdoc-parser dependency is not loaded", $directory ) );
+			exit;
+		}
 
 		// Import data
 		$this->_do_import( $this->_get_phpdoc_data( $directory, 'array' ), $assoc_args );
@@ -38,8 +41,8 @@ class Command extends WP_CLI_Command {
 	/**
 	 * Generate the data from the PHPDoc markup.
 	 *
-	 * @param string  $path   Directory or file to scan for PHPDoc
-	 * @param string  $format What format the data is returned in: [json|array].
+	 * @param string $path   Directory or file to scan for PHPDoc
+	 * @param string $format What format the data is returned in: [json|array].
 	 *
 	 * @return string|array
 	 */
@@ -66,15 +69,15 @@ class Command extends WP_CLI_Command {
 	/**
 	 * Import the PHPDoc $data into WordPress posts and taxonomies
 	 *
-	 * @param array   $data
-	 * @param array   $assoc_args Optional arguments.
-	 * @param bool    $deprecated Not used.
+	 * @param array $data
+	 * @param array $assoc_args Optional arguments.
+	 * @param bool  $deprecated Not used.
 	 */
 	protected function _do_import( array $data, $assoc_args = array(), $deprecated = false ) {
 
 		// Validate the data
 		$validate = new Importer;
-		$validate->setLogger( new WP_CLI_Logger() );
+		$validate->setLogger( new \WP_Parser\WP_CLI_Logger() );
 		$validate->validate( $data, $assoc_args );
 
 		WP_CLI::line();
