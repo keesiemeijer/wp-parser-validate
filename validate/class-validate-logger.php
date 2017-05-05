@@ -49,7 +49,7 @@ class Validate_Logger {
 	/**
 	 * Returns string used in sprintf depending on format.
 	 */
-	public function format_string() {
+	public function get_format_string() {
 		$format = "'%s'";
 		if ( 'html' === $this->format ) {
 			$format = "<span>%s</span>";
@@ -174,7 +174,7 @@ class Validate_Logger {
 	 */
 	public function format_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
 		$msg = '';
-		$format = $this->format_string();
+		$format = $this->get_format_string();
 		$str = "for %s {$format}";
 
 		if ( $parent_type && $parent_name ) {

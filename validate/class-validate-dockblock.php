@@ -91,7 +91,7 @@ class Validate_DocBlcock {
 		$parameters = get_parameter_names( $node );
 		$doc_params = get_doc_params_key( $node, 'variable' );
 		$doc_desc   = get_doc_params_key( $node, 'content' );
-		$format     = $this->logger->format_string();
+		$format     = $this->logger->get_format_string();
 		$continue   = true;
 
 		if ( is_hook( $type ) ) {
@@ -215,7 +215,7 @@ class Validate_DocBlcock {
 		$line       = get_line( $node );
 		$visibility = get_visibility( $node );
 		$access     = get_doc_access( $node );
-		$format     = $this->logger->format_string();
+		$format     = $this->logger->get_format_string();
 
 		if ( ( $visibility && $access ) && ( $access !== $visibility ) ) {
 			$msg = sprintf( "Wrong @access tag {$format} in DocBlock", $access );
@@ -295,7 +295,7 @@ class Validate_DocBlcock {
 		$name         = get_name( $node );
 		$line         = get_line( $node );
 		$return_types = get_doc_return_types( $node );
-		$format       = $this->logger->format_string();
+		$format       = $this->logger->get_format_string();
 
 		if ( ! ( isset( $return_types[0] ) && ( 1 === count( $return_types ) ) ) ) {
 			return;
