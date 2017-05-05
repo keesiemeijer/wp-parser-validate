@@ -28,10 +28,10 @@ function parse_content( $content ) {
 
 /**
  * Updates the temp file used for parsing.
- * 
- * @param  string $content The content to write to the temp file.
- * @param  string $context Should error be wrapped in paragraph tags. Default true.
- * @return string          Empty string or error message if an error occurred.
+ *
+ * @param string $content The content to write to the temp file.
+ * @param string $context Should error be wrapped in paragraph tags. Default true.
+ * @return string Empty string or error message if an error occurred.
  */
 function update_temp_file( $content = '', $context = '' ) {
 	$file    = WP_PARSER_VALIDATE_TEMP_FILE;
@@ -39,8 +39,8 @@ function update_temp_file( $content = '', $context = '' ) {
 	$message = '';
 
 	if ( is_writable( $file ) ) {
-		$save_to_file = file_put_contents( $file, $content );
-		if ( false === $save_to_file ) {
+		$write_to_file = file_put_contents( $file, $content );
+		if ( false === $write_to_file ) {
 			$message = $error;
 		}
 	} else {
@@ -51,12 +51,12 @@ function update_temp_file( $content = '', $context = '' ) {
 }
 
 /**
- * Updates the temp file after parsing
- * 
- * @param  string $message Message to display after parsing
- * @return string          Message to display after parsing
+ * Updates the temp file after parsing and returns validation messages.
+ *
+ * @param string $message Message to return after parsing.
+ * @return string Message to return after parsing.
  */
-function finnish_parsing( $message = '' ) {
+function finish_parsing( $message = '' ) {
 	$save_error = update_temp_file( "<?php\n// Temp file for parsing" );
 	if ( $save_error ) {
 		$message .= $save_error;
@@ -66,12 +66,12 @@ function finnish_parsing( $message = '' ) {
 }
 
 /**
- * Displays validation errors for code.
+ * Validates code and returns validation message html.
  *
  * @param string $code Code to validate.
  */
 function get_validation_html( $code = '' ) {
-	$out  = '';
+	$html = '';
 	$code = trim( (string) $code );
 
 	if ( empty( $code ) ) {
@@ -79,58 +79,62 @@ function get_validation_html( $code = '' ) {
 	}
 
 	if ( ! is_wp_parser_loaded() ) {
-		//return "<h3>Could not parse content. Missing dependencies</h3>";
+		return "<h3>Could not parse content. Missing dependencies</h3>";
 	}
 
-	// Parsing serrors.
+	// Check for parsing errors.
 	ob_start();
 	parse_content( $code );
 	$error = ob_get_contents();
 	ob_end_clean();
 
 	if ( $error ) {
-		$out .= "<h3>The code contains errors</h3>";
-		$out .= "<p>{$error}</p>";
-		return finnish_parsing( $out );
+		$html .= "<h3>The code contains errors</h3>";
+		$html .= "<p>{$error}</p>";
+		return finish_parsing( $html );
 	}
 
 	$data = parse_content( $code );
 	if ( ! ( isset( $data[0] ) && $data[0] ) ) {
-		return finnish_parsing( '' );
+		return finish_parsing( '' );
 	}
 
 	$data = $data[0];
-	$found = false;
-	foreach ( array( 'functions', 'classes', 'hooks' ) as $type ) {
-		if ( isset( $data[ $type ] ) ) {
-			$found = true;
-		}
-	}
 
-	if ( ! $found ) {
-		$out .= "<h3>The parser could not find any functions, classes, methods or hooks to validate</h3>";
-		$out .= "<p>Please include a function, class, method or hook and make sure the code is valid (i.e. doesn't produce any PHP parsing errors).</p>";
-		return finnish_parsing( $out );
+	// Check if file contains functions classes or hooks
+	$types_found = array_filter(  array( 'functions', 'classes', 'hooks' ),
+		function( $type ) use ( $data ) {
+			return isset( $data[ $type ] );
+		} );
+
+	if ( ! $types_found ) {
+		$html .= "<h3>The parser could not find any functions, classes, methods or hooks to validate</h3>";
+		$html .= "<p>Please include a function, class, method or hook and make sure the code is valid (i.e. doesn't produce any PHP parsing errors).</p>";
+		return finish_parsing( $html );
 	}
 
 	$validate = new Validate;
 	$validate->logger->set_format( 'html' );
 	$validate->validate_file( $data );
-	$log = $validate->logger->get_log_messages( true );
 
-	ob_start();
-	$validate->logger->display_logs();
-	$display = ob_get_contents();
-	ob_end_clean();
-
-	if ( ! empty( $log ) ) {
-		$out .= "<h3>Documentation did not pass validation</h3>";
-		$out .= $display;
-
+	// Get log messages with notices excluded.
+	$errors   = $validate->logger->get_log_messages( true );
+	if ( ! empty( $errors ) ) {
+		$html .= "<h3>Documentation did not pass validation</h3>";
 	} else {
-		$out .= "<h3 class='valid'>Documentation Passed Validation!</h3>";
-		$out .= $display;
+		$html .= "<h3 class='valid'>Documentation Passed Validation!</h3>";
 	}
 
-	return finnish_parsing( $out );
+	// Get all log messages
+	$messages = $validate->logger->get_log_messages();
+
+	if ( $messages ) {
+		$html .= '<ol>';
+		foreach ( $messages as $msg ) {
+			$html .= '<li>' . $msg . '</li>';
+		}
+		$html .= '</ol>';
+	}
+
+	return finish_parsing( $html );
 }

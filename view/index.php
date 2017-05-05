@@ -1,6 +1,6 @@
 <?php
 if ( ! isset( $content ) || ! isset( $validation ) ) {
-	// Directly run from the view directory 
+	// Bail if directly run from the view directory.
 	return;
 }
 ?>
@@ -30,7 +30,7 @@ if ( ! isset( $content ) || ! isset( $validation ) ) {
 					<label for="code">Validate Code:</label>
 					<textarea id="code_content" placeholder="Paste code to validate here." cols="70" rows="30" name="code_content" wrap="off"><?php echo $content ?></textarea></p>
 				<p>
-					<input type="submit" name="validate_code" value="Validate Code" >
+					<input type="submit" name="validate_code" value="Validate Documentation" >
 				</p>
 			</form>
 			<div class="content-footer">
