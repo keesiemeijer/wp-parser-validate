@@ -102,26 +102,6 @@ class Validate_Logger {
 	}
 
 	/**
-	 * Display log messages.
-	 *
-	 * @param bool $exclude_notices Whether to exclude notices or not. Default false.
-	 */
-	public function display_logs( $exclude_notices = false ) {
-		$out  = '';
-		$logs = $this->get_log_messages( $exclude_notices );
-
-		if ( empty( $logs ) ) {
-			return;
-		}
-
-		echo '<ol>';
-		foreach ( $logs as $msg ) {
-			echo '<li>' . $msg . '</li>';
-		}
-		echo '</ol>';
-	}
-
-	/**
 	 * Return log messages.
 	 *
 	 * @param boolean $exclude_notices Whether to exclude notices or not. Default false.
@@ -194,5 +174,4 @@ class Validate_Logger {
 
 		return $msg;
 	}
-
 }
