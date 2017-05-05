@@ -80,6 +80,7 @@ function remove_reference( $argument ) {
  *
  * This function tries to get array values from a string by
  * matching a string starting with 'array(' and ending with ')'.
+ * The parser returns all ref array hook parameters in a string.
  *
  * @param string $args Hook reference argument.
  * @return array        Hook reference arguments.
@@ -117,32 +118,36 @@ function is_hook( $type ) {
 }
 
 /**
- * Validate a hook name.
+ * Whether a hook name is concatenated.
  *
- * Todo: Get proper raw value of the hook name when parsing.
- * The parser returns "hook_name_$var" as "hook_name_{$var}"
+ * Checks hooks names for array keys ("hook_{$arr['val']}")
+ * or object properties "hook_{$obj->prop}"
  *
  * @param array $node Parsed hook data.
+ * @return boolean    True when name is concatenated
  */
-function validate_hook_name( $node ) {
+function is_hookname_concatenated( $node ) {
+	return isset( $node['concat'] ) && $node['concat'];
+}
 
+/**
+ * Whether a hook name is succinct.
+ *
+ *
+ * @param array $node Parsed hook data.
+ * @return boolean       [description]
+ */
+function is_hookname_succinct( $node ) {
 	$name_raw = get_name_raw( $node );
-	$type     = get_type( $node );
-
-	if ( isset( $node['concat'] ) && $node['concat'] ) {
-		return 'Invalid concatenated hook name';
-	}
-
-	// Hook names with array keys ("hook_{$arr['val']}") or object properties "hook_{$obj->prop}"
 	$invalid_chars = array_filter( array( '[', '->', ), function( $chars ) use ( $name_raw ) {
 			return false !== strpos( $name_raw, $chars );
 		} );
 
 	if ( ! empty( $invalid_chars ) ) {
-		return 'Hook name could be more succinct';
+		return false;
 	}
 
-	return '';
+	return true;
 }
 
 

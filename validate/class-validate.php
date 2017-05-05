@@ -170,15 +170,16 @@ class Validate {
 		$line     = get_line( $node );
 		$desc     = get_doc_description( $node );
 
-		$msg = validate_hook_name( $node );
-		if ( $msg ) {
-			if ( 0 === strpos( $msg, 'Hook name could be more succinct' ) ) {
-				$msg .= $this->logger->log_type_message( $name, $type, $parent_type, $parent_name, $line );
-				$this->logger->log_notice( $name, $type, $msg );
-			} else {
-				$msg .= $this->logger->log_type_message( $name_raw, $type, $parent_type, $parent_name, $line );
-				$this->logger->log( $name, $type, $msg );
-			}
+		if( is_hookname_concatenated( $node) ) {
+			$msg = 'Invalid concatenated hook name';
+			$msg .= $this->logger->format_message( $name_raw, $type, $parent_type, $parent_name, $line );
+			$this->logger->log( $name, $type, $msg );
+		}
+
+		if( ! is_hookname_succinct( $node ) ){
+			$msg = 'Hook name could be more succinct';
+			$msg .= $this->logger->format_message( $name, $type, $parent_type, $parent_name, $line );
+			$this->logger->log_notice( $name, $type, $msg );
 		}
 
 		if ( $this->docblock->has_docblock( $node, $type, $parent_type, $parent_name ) ) {
