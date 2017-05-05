@@ -163,7 +163,7 @@ class Validate_Logger {
 	}
 
 	/**
-	 * Returns a log message for the type of node, with parent node and line number.
+	 * Returns a formatted log message for the type of node, with parent node and line number.
 	 *
 	 * @param string  $name        Name of node.
 	 * @param string  $type        Type of node. ('function', 'hook', 'class', 'method', 'property')
@@ -172,7 +172,7 @@ class Validate_Logger {
 	 * @param integer $line        Line number of node in file.
 	 * @return string              Log message.
 	 */
-	public function log_type_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
+	public function format_message( $name, $type, $parent_type = '', $parent_name = '', $line = 0 ) {
 		$msg = '';
 		$format = $this->format_string();
 		$str = "for %s {$format}";
